@@ -27,17 +27,31 @@ document.querySelectorAll('.carousel-btn').forEach(btn =>
 // Footer year
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Contact form (placeholder — wire up to a backend or form service)
+// Contact form — submits to Netlify Forms (works once deployed on Netlify)
 const form = document.getElementById('contact-form');
 const status = form.querySelector('.form-status');
+const submitBtn = form.querySelector('button[type="submit"]');
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!form.checkValidity()) {
     status.textContent = 'Please fill in all required fields.';
     return;
   }
-  // TODO: send form data, e.g. fetch('/api/contact', { method: 'POST', body: new FormData(form) })
-  status.textContent = "Thanks — we'll be in touch shortly.";
-  form.reset();
+  submitBtn.disabled = true;
+  status.textContent = 'Sending…';
+  try {
+    const res = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString(),
+    });
+    if (!res.ok) throw new Error(res.status);
+    status.textContent = "Thanks — we'll be in touch shortly.";
+    form.reset();
+  } catch (err) {
+    status.textContent = 'Sorry, something went wrong. Please email us directly.';
+  } finally {
+    submitBtn.disabled = false;
+  }
 });

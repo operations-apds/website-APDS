@@ -136,3 +136,5 @@ h3 { font-size: 1.25rem; font-weight: 700; }
   .carousel { grid-auto-columns: 80%; }
   .hero { min-height: 540px; }
 }
+
+.hidden-field { display: none; }
